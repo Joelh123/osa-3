@@ -1,6 +1,8 @@
 const express = require("express")
 const app = express()
 
+const currentDate = new Date()
+
 let data = [
     { 
       "id": "1",
@@ -32,7 +34,11 @@ app.get("/api/persons", (request, response) => {
     response.json(data)
 })
 
+app.get("/info", (request, response) => {
+    response.send(`<p>Phonebook has info for ${data.length} people</p><p>${currentDate}</p>`)
+})
+
 const PORT = 3001
 app.listen(PORT, () => {
-    console.log(`Server running on port $`)
+    console.log(`Server running on port ${PORT}`)
 })
