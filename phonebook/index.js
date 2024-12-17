@@ -1,4 +1,5 @@
 const express = require("express")
+const morgan = require("morgan")
 const app = express()
 
 const currentDate = new Date()
@@ -27,6 +28,7 @@ let persons = [
 ]
 
 app.use(express.json())
+app.use(morgan("tiny"))
 
 app.get("/", (request, response) => {
     response.send("<h1>hello world</h1>")
@@ -70,7 +72,6 @@ app.post("/api/persons", (request, response) => {
     }
 
     personObject.id = Math.floor(Math.random() * 1000000000)
-    console.log(personObject.id)
     response.json(personObject)
 })
 
