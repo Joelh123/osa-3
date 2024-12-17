@@ -60,6 +60,15 @@ app.delete("/api/persons/:id", (request, response) => {
 
 app.post("/api/persons", (request, response) => {
     const personObject = request.body
+
+    if (!personObject.name || !personObject.number) {
+        return response.status(404).json({ error: "name and number required" })
+    }
+
+    if (persons.find(person => person.name === personObject.name)) {
+        return response.status(404).json({ error: "name must be unique" })
+    }
+
     personObject.id = Math.floor(Math.random() * 1000000000)
     console.log(personObject.id)
     response.json(personObject)
