@@ -22,7 +22,7 @@ if (process.argv.length === 3) {
         result.forEach(note => {
             console.log(note)
         })
-        mongoose.connection.close
+        mongoose.connection.close()
     })
     return
 }
@@ -34,5 +34,5 @@ const person = new Person({
 
 person.save().then(result => {
     console.log(`added ${process.argv[3]} number ${process.argv[4]} to phonebook`)
-    mongoose.connection.close
+    mongoose.connection.close()
 })
