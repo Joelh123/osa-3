@@ -2,45 +2,31 @@ const express = require("express")
 const morgan = require("morgan")
 const cors = require("cors")
 const app = express()
-const mongoose = require("mongoose")
-
-if (process.argv.length < 3) {
-    console.log("give password as argument")
-}
-
-const url = process.env.MONGODB_URI;
-
-mongoose.connect(url)
-
-const personSchema = new mongoose.Schema({
-    name: String,
-    number: String
-})
-
-const Person = mongoose.model("Person", personSchema)
-
-if (process.argv.length === 3) {
-    Person.find({}).then(result => {
-        result.forEach(note => {
-            console.log(note)
-        })
-        mongoose.connection.close()
-    })
-    return
-}
-
-const person = new Person({
-    name: process.argv[3],
-    number: process.argv[4]
-})
-
-person.save().then(result => {
-    console.log(`added ${process.argv[3]} number ${process.argv[4]} to phonebook`)
-    mongoose.connection.close()
-})
 
 const currentDate = new Date()
 
+let persons = [
+    { 
+      "id": "1",
+      "name": "Arto Hellas", 
+      "number": "040-123456"
+    },
+    { 
+      "id": "2",
+      "name": "Ada Lovelace", 
+      "number": "39-44-5323523"
+    },
+    { 
+      "id": "3",
+      "name": "Dan Abramov", 
+      "number": "12-43-234345"
+    },
+    { 
+      "id": "4",
+      "name": "Mary Poppendieck", 
+      "number": "39-23-6423122"
+    }
+]
 morgan.token('body', function (req, res) { return JSON.stringify(req.body) })
 
 app.use(express.json())
@@ -53,20 +39,16 @@ app.get("/", (request, response) => {
 })
 
 app.get("/api/persons", (request, response) => {
-    Person.find({}).then(persons => {
-        response.json(persons)
-    })
+    response.json(persons)
 })
 
 app.get("/info", (request, response) => {
-    Person.find({}).then(persons => {
-        response.send(`<p>Phonebook has info for ${persons.length} people</p><p>${currentDate}</p>`)
-    })
+    response.send(`<p>Phonebook has info for ${persons.length} people</p><p>${currentDate}</p>`)
 })
 
 app.get("/api/persons/:id", (request, response) => {
     const id = request.params.id
-    const person = Person.find({}).then(persons => persons.find(person => person.id === id))
+    const person = persons.find(person => person.id === id)
 
     if (person) {
         response.json(person)
@@ -77,7 +59,7 @@ app.get("/api/persons/:id", (request, response) => {
 
 app.delete("/api/persons/:id", (request, response) => {
     const id = request.params.id
-    Person.find({}).then(persons => persons.filter(person => person.id !== id))
+    persons = persons.filter(person => person.id !== id)
 
     response.status(204).end()
 })
