@@ -6,6 +6,3 @@ Content-Type: application/json
     "number": "31",
     "id": ""
 }
-
-###
-GET http://localhost:3001/api/persons
