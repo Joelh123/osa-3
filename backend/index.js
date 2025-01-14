@@ -25,40 +25,39 @@ app.get("/api/persons", (request, response) => {
 })
 
 app.get("/info", (request, response) => {
-    response.send(`<p>Phonebook has info for ${persons.length} people</p><p>${currentDate}</p>`)
+    response.send(`<p>Phonebook has info for ${Person.find({}).then(persons => persons.length)} people</p><p>${currentDate}</p>`)
 })
 
 app.get("/api/persons/:id", (request, response) => {
-    const id = request.params.id
-    const person = persons.find(person => person.id === id)
-
-    if (person) {
+    Person.findById(request.params.id).then(person => {
         response.json(person)
-    } else {
-        response.status(404).end()
-    }
+    })
 })
 
 app.delete("/api/persons/:id", (request, response) => {
     const id = request.params.id
-    persons = persons.filter(person => person.id !== id)
+    Person.find({}).then(persons => {
+        persons.filter(person => person.id !== id)
+    })
 
     response.status(204).end()
 })
 
 app.post("/api/persons", (request, response) => {
-    const personObject = request.body
+    const body = request.body
 
-    if (!personObject.name || !personObject.number) {
-        return response.status(404).json({ error: "name and number required" })
+    if (body.content === undefined) {
+        return response.status(400).json({ error: "content missing" })
     }
 
-    if (persons.find(person => person.name === personObject.name)) {
-        return response.status(404).json({ error: "name must be unique" })
-    }
+    const personObject = new Person({
+        name: body.name,
+        number: body.number
+    })
 
-    personObject.id = Math.floor(Math.random() * 1000000000)
-    response.json(personObject)
+    personObject.save().then(savedPerson => {
+        response.json(savedPerson)
+    })
 })
 
 const PORT = process.env.PORT || 3001
